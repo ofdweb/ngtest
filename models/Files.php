@@ -80,6 +80,23 @@ class Files extends \yii\db\ActiveRecord
       return $model->id;
     }
   
+    public function createFileFromBase64($baseCode, $fileName)
+    {
+      $fileBase = base64_decode($baseCode);
+      $path = '/tmp/' . $fileName;
+      
+      file_put_contents($path, $fileBase);
+       
+      $file = [
+        'name' => $fileName,
+        'type' => mime_content_type($path),
+        'size' => filesize($path),
+        'tmp_name' => $path
+      ];
+      
+      return self::createFile($file);
+    }
+  
     public function getFullPath()
     {
       return Yii::getAlias('@webroot') . $this->path;
